@@ -1,6 +1,6 @@
 // capture-topbanner.js
 // hmall.com 초특가샵 페이지의 상단 롤링 배너(탑배너) 중
-// 6번째 배너가 보일 때의 화면(제목바 ~ 배너 이미지)을 캡쳐하는 스크립트
+// 4번째, 5번째, 6번째 배너가 보일 때의 화면을 각각 캡쳐하는 스크립트
 
 const { chromium } = require('playwright');
 const path = require('path');
@@ -9,8 +9,13 @@ const fs = require('fs');
 const TARGET_URL = 'https://www.hmall.com/md/dpa/searchSpexSectItem?sectId=3107994';
 const OUTPUT_DIR = path.join(__dirname, '초특가샵 탑배너(6번째)');
 
-// Swiper는 0부터 세므로, 6번째 배너 = index 5
-const TARGET_SLIDE_INDEX = 5;
+// Swiper는 0부터 세므로, N번째 배너 = index (N-1)
+// 4번째, 5번째, 6번째 배너를 순서대로 캡쳐
+const TARGET_SLIDES = [
+  { label: '4번', index: 3 },
+  { label: '5번', index: 4 },
+  { label: '6번', index: 5 },
+];
 
 function getDateString() {
   const now = new Date();
@@ -57,24 +62,24 @@ function getDateString() {
     });
   });
 
-  // 6번째 배너(index 5)가 활성 슬라이드가 될 때까지 대기
-  // (자동 롤링이므로 최대 60초까지 기다림)
-  const targetSlide = page.locator(
-    `.swiper-slide-active[data-swiper-slide-index="${TARGET_SLIDE_INDEX}"]`
-  );
-  await targetSlide.waitFor({ state: 'visible', timeout: 60000 });
-  console.log('6번째 배너 활성화 확인');
-
-  // 렌더링 안정화를 위한 짧은 대기
-  await page.waitForTimeout(500);
-
   const dateStr = getDateString();
-  const outputPath = path.join(OUTPUT_DIR, `${dateStr}.png`);
 
-  // 화면 전체(뷰포트) 캡쳐
-  await page.screenshot({ path: outputPath });
+  // 4번째 → 5번째 → 6번째 배너 순서대로 각각 대기 후 캡쳐
+  for (const { label, index } of TARGET_SLIDES) {
+    const targetSlide = page.locator(
+      `.swiper-slide-active[data-swiper-slide-index="${index}"]`
+    );
+    // 자동 롤링이므로 최대 60초까지 기다림
+    await targetSlide.waitFor({ state: 'visible', timeout: 60000 });
+    console.log(`${label}째 배너 활성화 확인`);
 
-  console.log(`캡쳐 완료: ${outputPath}`);
+    // 렌더링 안정화를 위한 짧은 대기
+    await page.waitForTimeout(500);
+
+    const outputPath = path.join(OUTPUT_DIR, `${dateStr}_${label}.png`);
+    await page.screenshot({ path: outputPath });
+    console.log(`캡쳐 완료: ${outputPath}`);
+  }
 
   await browser.close();
 })().catch((err) => {
