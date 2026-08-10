@@ -34,6 +34,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add screenshots/*.png
+          git add "검색전 캡쳐"/*.png
           git diff --staged --quiet && echo "변경 사항 없음" || git commit -m "chore: daily capture $(date -u +'%Y-%m-%d')"
           git push
