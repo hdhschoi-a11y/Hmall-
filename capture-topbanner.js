@@ -7,7 +7,7 @@ const path = require('path');
 const fs = require('fs');
 
 const TARGET_URL = 'https://www.hmall.com/md/dpa/searchSpexSectItem?sectId=3107994';
-const OUTPUT_DIR = path.join(__dirname, 'screenshots-topbanner');
+const OUTPUT_DIR = path.join(__dirname, '초특가샵 탑배너(6번째)');
 
 // Swiper는 0부터 세므로, 6번째 배너 = index 5
 const TARGET_SLIDE_INDEX = 5;
