@@ -39,17 +39,32 @@ function getDateString() {
   // 페이지 로드 직후 렌더링 안정화를 위한 대기
   await page.waitForTimeout(2000);
 
-  // 초기 진입 시 뜨는 하단 팝업 배너 닫기 ("닫기" 버튼)
+  // 초기 진입 시 뜨는 하단 팝업 배너(role="dialog") 닫기
   // 팝업이 없는 경우도 있으므로 실패해도 무시하고 진행
   try {
-    const closeBtn = page.getByText('닫기', { exact: true });
-    await closeBtn.first().waitFor({ state: 'visible', timeout: 5000 });
-    await closeBtn.first().click();
+    const dialog = page.locator('[role="dialog"]').first();
+    await dialog.waitFor({ state: 'visible', timeout: 8000 });
+    console.log('팝업 발견, 닫기 시도');
+
+    const closeBtn = dialog.getByText('닫기');
+    if (await closeBtn.count() > 0) {
+      await closeBtn.first().click({ timeout: 5000 });
+    } else {
+      await page.keyboard.press('Escape');
+    }
+    await dialog.waitFor({ state: 'hidden', timeout: 5000 });
     console.log('팝업 닫기 완료');
-    await page.waitForTimeout(500);
   } catch (e) {
-    console.log('닫을 팝업 없음 (정상 진행)');
+    console.log('팝업을 정상적으로 닫지 못함 (강제 숨김으로 대체):', e.message);
   }
+
+  // 안전장치: 위 시도로도 남아있는 팝업(dialog)이 있다면 강제로 화면에서 숨김
+  // (검색창 클릭을 가로채는 것을 방지)
+  await page.evaluate(() => {
+    document.querySelectorAll('[role="dialog"]').forEach((el) => {
+      el.style.display = 'none';
+    });
+  });
 
   // 상단 검색창 클릭 (실제 요소: id="searchActive")
   const searchBox = page.locator('#searchActive');
