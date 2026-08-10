@@ -6,7 +6,7 @@ const path = require('path');
 const fs = require('fs');
 
 const TARGET_URL = 'https://www.hmall.com/md/dpl/index';
-const OUTPUT_DIR = path.join(__dirname, 'screenshots');
+const OUTPUT_DIR = path.join(__dirname, '검색전 캡쳐');
 
 // 파일명에 캡쳐 날짜를 포함 (예: 2026-08-10.png)
 function getDateString() {
