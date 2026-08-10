@@ -57,10 +57,6 @@ function getDateString() {
     });
   });
 
-  // "초특가샵" 제목 영역(헤더) 대기
-  const header = page.getByText('초특가샵', { exact: true });
-  await header.waitFor({ state: 'visible', timeout: 30000 });
-
   // 6번째 배너(index 5)가 활성 슬라이드가 될 때까지 대기
   // (자동 롤링이므로 최대 60초까지 기다림)
   const targetSlide = page.locator(
