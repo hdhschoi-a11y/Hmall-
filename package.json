@@ -1,0 +1,12 @@
+{
+  "name": "hmall-capture",
+  "version": "1.0.0",
+  "description": "hmall.com 검색창 화면(급상승 검색어) 매일 자동 캡쳐",
+  "main": "capture.js",
+  "scripts": {
+    "capture": "node capture.js"
+  },
+  "dependencies": {
+    "playwright": "^1.47.0"
+  }
+}
