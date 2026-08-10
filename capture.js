@@ -36,10 +36,24 @@ function getDateString() {
   // domcontentloaded(뼈대만 로드) 기준으로 바꾸고, 타임아웃도 넉넉하게 잡습니다.
   await page.goto(TARGET_URL, { waitUntil: 'domcontentloaded', timeout: 90000 });
 
-  // 검색창 클릭 (placeholder 텍스트 기준)
-  // 사이트 구조가 바뀌면 이 선택자를 실제 요소에 맞게 수정해야 할 수 있습니다.
-  const searchBox = page.getByPlaceholder('검색어를 입력해 주세요');
-  await searchBox.waitFor({ state: 'visible', timeout: 60000 });
+  // 페이지 로드 직후 렌더링 안정화를 위한 대기
+  await page.waitForTimeout(2000);
+
+  // 초기 진입 시 뜨는 하단 팝업 배너 닫기 ("닫기" 버튼)
+  // 팝업이 없는 경우도 있으므로 실패해도 무시하고 진행
+  try {
+    const closeBtn = page.getByText('닫기', { exact: true });
+    await closeBtn.first().waitFor({ state: 'visible', timeout: 5000 });
+    await closeBtn.first().click();
+    console.log('팝업 닫기 완료');
+    await page.waitForTimeout(500);
+  } catch (e) {
+    console.log('닫을 팝업 없음 (정상 진행)');
+  }
+
+  // 상단 검색창 클릭 (실제 요소: id="searchActive")
+  const searchBox = page.locator('#searchActive');
+  await searchBox.waitFor({ state: 'visible', timeout: 30000 });
   await searchBox.click();
 
   // "급상승 검색어" 패널이 뜰 때까지 대기
