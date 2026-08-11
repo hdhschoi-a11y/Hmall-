@@ -2,8 +2,8 @@ name: Daily Hmall Top Banner Capture
 
 on:
   schedule:
-    # UTC 00:30 = KST 09:30 (오늘 테스트용)
-    - cron: '30 0 * * *'
+    # UTC 02:40 = KST 11:40 (오늘 재테스트용)
+    - cron: '40 2 * * *'
   workflow_dispatch: {}   # 수동 실행 버튼 (테스트용)
 
 permissions:
