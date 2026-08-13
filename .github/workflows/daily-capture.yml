@@ -2,8 +2,8 @@ name: Daily Hmall Search Panel Capture
 
 on:
   schedule:
-    # UTC 02:40 = KST 11:40 (오늘 재테스트용)
-    - cron: '40 2 * * *'
+    # UTC 23:07 = KST 08:07 (매일)
+    - cron: '7 23 * * *'
   workflow_dispatch: {}   # 수동 실행 버튼 (테스트용)
 
 permissions:
@@ -36,4 +36,5 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add "검색전 캡쳐"/*.png
           git diff --staged --quiet && echo "변경 사항 없음" || git commit -m "chore: daily capture $(date -u +'%Y-%m-%d')"
+          git pull --rebase origin main
           git push
