@@ -59,16 +59,12 @@ function getDateString() {
   await liveTab.click();
   console.log('모바일라이브 탭 클릭 완료');
 
-  // "쇼라 PICK" 영역(제목+상품 목록을 감싸는 전체 박스)이 나타날 때까지 대기
+  // "쇼라 PICK" 영역이 렌더링될 때까지 대기 (스크롤 없이 탭 클릭 직후 화면 그대로 캡쳐)
   const syoraPick = page.locator('div.as5dvo0').first();
   await syoraPick.waitFor({ state: 'visible', timeout: 30000 });
   console.log('쇼라 PICK 영역 확인');
 
-  // 해당 영역의 맨 위가 화면 상단에 오도록 스크롤 (제목+상품 4개가 아래로 이어서 보이게)
-  await syoraPick.evaluate((el) => {
-    el.scrollIntoView({ block: 'start', inline: 'nearest' });
-  });
-  // 스크롤 및 렌더링 안정화를 위한 대기
+  // 렌더링 안정화를 위한 대기
   await page.waitForTimeout(1000);
 
   const dateStr = getDateString();
